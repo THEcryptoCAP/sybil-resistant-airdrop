@@ -16,48 +16,43 @@ export default async function handler(req, res) {
         if (!alchemyApiKey) {
             console.error('Alchemy API key is missing');
             return res.status(500).json({
-                message: 'Server configuration error: Alchemy API key is missing',
-                error: 'ALCHEMY_API_KEY environment variable is not set'
+                message: 'Server configuration error: Alchemy API key is missing'
             });
         }
 
-        console.log('Initializing Alchemy with API key:', alchemyApiKey.substring(0, 5) + '...');
-        
         const alchemy = new Alchemy({
             apiKey: alchemyApiKey,
             network: Network.ETH_MAINNET,
         });
 
-        console.log('Fetching ENS name for address:', walletAddress);
-        const ensName = await alchemy.core.lookupAddress(walletAddress);
+        // Fetch wallet verification data
+        const [ensName, transactionCount, nfts] = await Promise.all([
+            alchemy.core.lookupAddress(walletAddress),
+            alchemy.core.getTransactionCount(walletAddress),
+            alchemy.nft.getNftsForOwner(walletAddress)
+        ]);
 
-        console.log('Fetching transaction count for address:', walletAddress);
-        const transactionCount = await alchemy.core.getTransactionCount(walletAddress);
-
-        console.log('Fetching NFT holdings for address:', walletAddress);
-        const nfts = await alchemy.nft.getNftsForOwner(walletAddress);
-
-        // Verification Logic
-        const isVerified = ensName || transactionCount > 0 || nfts.ownedNfts.length > 0;
+        // Wallet is verified if it has either:
+        // - An ENS name
+        // - Past transactions
+        // - NFT holdings
+        const isVerified = Boolean(
+            ensName || 
+            transactionCount > 0 || 
+            nfts.ownedNfts.length > 0
+        );
 
         return res.status(200).json({
             isVerified,
             ensName,
             transactionCount,
-            nftCount: nfts.ownedNfts.length,
-            nfts: nfts.ownedNfts
+            nftCount: nfts.ownedNfts.length
         });
     } catch (error) {
-        console.error('Detailed error during on-chain verification:', {
-            message: error.message,
-            stack: error.stack,
-            response: error.response?.data
-        });
-        
+        console.error('Error during wallet verification:', error);
         return res.status(500).json({
-            message: 'Failed to verify on-chain data',
-            error: error.message,
-            details: error.response?.data || 'No additional details available'
+            message: 'Failed to verify wallet',
+            error: error.message
         });
     }
 }
