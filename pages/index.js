@@ -2,6 +2,7 @@
 import { useState } from "react";
 import WalletConnect from "../components/WalletConnect";
 import axios from "axios";
+import ClaimAirdrop from '../components/ClaimAirdrop';
 
 export default function Home() {
     const [connectedWallet, setConnectedWallet] = useState(null);
@@ -256,28 +257,27 @@ export default function Home() {
                     )}
 
                     {verificationResult && (
-                        <div style={{
-                            marginTop: "20px",
-                            padding: "15px",
-                            backgroundColor: verificationResult.isEligible ? "#e7f7e7" : "#fff0f0",
-                            border: `1px solid ${verificationResult.isEligible ? "#4caf50" : "#ff6b6b"}`,
-                            borderRadius: "6px"
-                        }}>
-                            <h3 style={{ 
-                                color: verificationResult.isEligible ? "#2e7d32" : "#d32f2f",
-                                marginTop: 0
-                            }}>
-                                {verificationResult.isEligible ? "🎉 Eligible for Airdrop!" : "❌ Not Eligible for Airdrop"}
-                            </h3>
-                            <div style={{ marginTop: "15px" }}>
-                                <p>Twitter Username: @{verificationResult.twitterUsername}</p>
-                                <p>Wallet Address: {connectedWallet}</p>
-                                <p>Wallet Status: {verificationResult.isVerified ? "✅ Verified" : "❌ Not Verified"}</p>
-                                {verificationResult.ensName && <p>ENS Name: {verificationResult.ensName}</p>}
-                                <p>Transaction Count: {verificationResult.transactionCount}</p>
-                                <p>NFT Holdings: {verificationResult.nftCount}</p>
-                                <p>Yaps Score: {verificationResult.yapsScore}</p>
+                        <div className="mt-8 p-6 bg-white rounded-lg shadow-lg">
+                            <h2 className="text-2xl font-bold mb-4">Verification Results</h2>
+                            <div className="space-y-2">
+                                <p><span className="font-semibold">Twitter Username:</span> {verificationUsername}</p>
+                                <p><span className="font-semibold">Connected Wallet:</span> {connectedWallet}</p>
+                                <p><span className="font-semibold">ENS Name:</span> {verificationResult.ensName || 'None'}</p>
+                                <p><span className="font-semibold">Transaction Count:</span> {verificationResult.transactionCount}</p>
+                                <p><span className="font-semibold">NFT Count:</span> {verificationResult.nftCount}</p>
+                                <p><span className="font-semibold">Yaps Score:</span> {verificationResult.yapsScore}</p>
+                                <p className={`font-bold ${verificationResult.isEligible ? 'text-green-600' : 'text-red-600'}`}>
+                                    Status: {verificationResult.isEligible ? 'Eligible for Airdrop' : 'Not Eligible'}
+                                </p>
                             </div>
+                            
+                            {verificationResult.isEligible && (
+                                <ClaimAirdrop 
+                                    address={connectedWallet}
+                                    twitterUsername={verificationUsername}
+                                    isEligible={verificationResult.isEligible}
+                                />
+                            )}
                         </div>
                     )}
                 </div>
