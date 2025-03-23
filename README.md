@@ -1,6 +1,6 @@
 # Sybil-Resistant Airdrop System
 
-A decentralized airdrop system that implements multiple layers of verification to prevent Sybil attacks and ensure fair token distribution.
+A decentralized airdrop system that implements multiple layers of verification to prevent Sybil attacks and ensure fair token distribution.This system uses kaito yaps- Proof of attention (yaps score) and alchemy api to fetch ens name, past transactions and nft holdings to make sure the airdrop goes in right hands(the concept i named as Proof-Of-Activity). :-)
 
 ## Understanding Sybil Attacks in Airdrops
 
