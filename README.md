@@ -1,36 +1,213 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sybil-Resistant Airdrop System
 
-## Getting Started
+A decentralized airdrop system that implements multiple layers of verification to prevent Sybil attacks and ensure fair token distribution.
 
-First, run the development server:
+## Understanding Sybil Attacks in Airdrops
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### What are Sybil Attacks?
+Sybil attacks occur when a single entity creates multiple fake identities to gain unfair advantages in a system. In the context of airdrops, attackers create multiple wallet addresses to claim more tokens than they should, undermining the fair distribution mechanism.
+
+### Impact on Airdrop Systems
+- **Token Dilution**: Legitimate users receive fewer tokens due to unfair distribution
+- **Loss of Value**: Token value may decrease due to concentrated holdings
+- **Community Distrust**: Users lose faith in the project's fairness
+- **Resource Waste**: Project resources are allocated to non-genuine participants
+
+## How This Project Prevents Sybil Attacks
+
+Our system implements multiple verification layers:
+
+1. **On-Chain Verification**
+   - ENS name resolution
+   - Transaction history analysis
+   - NFT holdings verification
+   - Smart contract interactions
+
+2. **Social Verification**
+   - Twitter account verification through Yaps score
+   - Historical social activity analysis
+   - Account age and engagement metrics
+
+3. **Multi-Factor Authentication**
+   - Wallet connection verification
+   - Social media account linking
+   - On-chain activity validation
+
+## Technical Architecture
+
+### Smart Contracts
+
+#### 1. ChainlinkYapsFetcher.sol
+- **Purpose**: Fetches and verifies Twitter user data using Chainlink oracles
+- **Key Features**:
+  - Chainlink integration for off-chain data
+  - Yaps score verification
+  - Eligibility checking
+  - Airdrop distribution logic
+
+#### 2. AlchemyAPI.sol
+- **Purpose**: Interfaces with Alchemy API for on-chain data
+- **Key Features**:
+  - ENS resolution
+  - Transaction history analysis
+  - NFT holdings verification
+  - Gas optimization
+
+### Frontend Components
+
+#### 1. WalletConnect.js
+- **Purpose**: Handles wallet connection and authentication
+- **Libraries Used**:
+  - ethers.js: Ethereum interaction
+  - MetaMask: Wallet connection
+
+#### 2. ClaimAirdrop.js
+- **Purpose**: Manages airdrop claiming process
+- **Features**:
+  - User input validation
+  - Transaction handling
+  - Error management
+  - Loading states
+
+#### 3. AirDropEligibility.js
+- **Purpose**: Verifies user eligibility
+- **Features**:
+  - Multi-factor verification
+  - Score calculation
+  - Status tracking
+
+## Technical Stack
+
+### Smart Contracts
+- Solidity ^0.8.19
+- OpenZeppelin Contracts
+- Chainlink Contracts
+- Hardhat Development Environment
+
+### Frontend
+- Next.js
+- React
+- ethers.js
+- TailwindCSS
+- Axios
+
+### APIs
+- Alchemy API
+- Chainlink Oracle
+- Kaito Yaps API
+
+## Workflow
+
+1. **User Connection**
+   ```mermaid
+   graph LR
+   A[User] --> B[Connect Wallet]
+   B --> C[Enter Twitter Username]
+   C --> D[Start Verification]
+   ```
+
+2. **Verification Process**
+   ```mermaid
+   graph TD
+   A[Start Verification] --> B[Check ENS]
+   B --> C[Verify Transactions]
+   C --> D[Check NFT Holdings]
+   D --> E[Get Yaps Score]
+   E --> F[Calculate Eligibility]
+   ```
+
+3. **Airdrop Claim**
+   ```mermaid
+   graph LR
+   A[Eligible User] --> B[Enter Details]
+   B --> C[Submit Claim]
+   C --> D[Process Transaction]
+   D --> E[Receive Tokens]
+   ```
+
+## Setup and Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/sybil-resistant-airdrop.git
+   cd sybil-resistant-airdrop
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your values
+   ```
+
+4. **Deploy contracts**
+   ```bash
+   npx hardhat run scripts/deploy.js --network sepolia
+   ```
+
+5. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+## Environment Variables
+
+```env
+# Network Configuration
+SEPOLIA_RPC_URL=your_sepolia_rpc_url
+PRIVATE_KEY=your_wallet_private_key
+
+# API Keys
+ALCHEMY_API_KEY=your_alchemy_api_key
+ETHERSCAN_API_KEY=your_etherscan_api_key
+
+# Chainlink Configuration
+CHAINLINK_ORACLE_ADDRESS=your_chainlink_oracle_address
+CHAINLINK_JOB_ID=your_chainlink_job_id
+
+# Token Configuration
+TOKEN_ADDRESS=your_erc20_token_address
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Security Considerations
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. **Smart Contract Security**
+   - Reentrancy protection
+   - Access control
+   - Input validation
+   - Gas optimization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Frontend Security**
+   - Input sanitization
+   - Transaction signing
+   - Error handling
+   - Rate limiting
 
-## Learn More
+3. **API Security**
+   - Key management
+   - Request validation
+   - Response verification
+   - Error handling
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Acknowledgments
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- OpenZeppelin for smart contract libraries
+- Chainlink for oracle services
+- Alchemy for blockchain API
+- Kaito for Yaps score data
